@@ -72,6 +72,7 @@ class NetworkProduct {
     static func networking(completion: @escaping ([Product])-> Void) {
         
         let session = URLSession.shared
+        
         var url = URL(string: "https://api.producthunt.com/v1/posts")
         
         let date = Date()
