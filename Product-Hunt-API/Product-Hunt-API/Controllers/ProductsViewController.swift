@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  ProductsViewController.swift
 //  Product-Hunt-API
 //
 //  Created by Elmer Astudillo on 9/20/17.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ProductsViewController: UIViewController {
 
     @IBOutlet weak var productsTableView: UITableView!
     
@@ -23,14 +23,17 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        NetworkProduct.networking { (allProducts) in
-            self.products = allProducts
+    
+        Networking.shared.fetch(route: .post) { (data) in
+            let producthunt = try? JSONDecoder().decode(Producthunt.self, from: data)
+            guard let newPosts = producthunt?.posts else{return}
+            self.products = newPosts
             DispatchQueue.main.async {
                 self.productsTableView.reloadData()
             }
         }
-        // Do any additional setup after loading the view.
+        
+        
     }
     
     override func didReceiveMemoryWarning() {
@@ -38,20 +41,9 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
-    
-    /*
-     // MARK: - Navigation
-     
-     // In a storyboard-based application, you will often want to do a little preparation before navigation
-     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-     // Get the new view controller using segue.destinationViewController.
-     // Pass the selected object to the new view controller.
-     }
-     */
-    
 }
 
-extension ViewController : UITableViewDataSource
+extension ProductsViewController : UITableViewDataSource
 {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return products.count
@@ -89,7 +81,7 @@ extension ViewController : UITableViewDataSource
     }
 }
 
-extension ViewController : UITableViewDelegate
+extension ProductsViewController : UITableViewDelegate
 {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let product = products[indexPath.row]

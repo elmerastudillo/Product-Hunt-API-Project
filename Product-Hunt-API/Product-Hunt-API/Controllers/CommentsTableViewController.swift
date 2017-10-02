@@ -26,18 +26,11 @@ class CommentsTableViewController: UITableViewController {
         self.tableView.delegate = self
         self.tableView.dataSource = self
         prepareSwipe()
-        NetworkComments.networking(postID: postID) { (allComments) in
+        Networking.shared.fetch(route: .comments(postId: postID)) { (data) in
+            let commentsData = try? JSONDecoder().decode(Comments.self, from: data)
+            guard let allComments = commentsData?.comments else {return}
             self.comments = allComments
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
-            
         }
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
     }
 
     override func didReceiveMemoryWarning() {
